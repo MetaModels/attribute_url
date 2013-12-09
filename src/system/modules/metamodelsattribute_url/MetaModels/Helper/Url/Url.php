@@ -57,8 +57,12 @@ class Url
 	 */
 	public function singlePagePicker($dc)
 	{
-		$strField = 'ctrl_' . $dc->inputName;
-		return ' ' . ContaoController::getInstance()->generateImage('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top;cursor:pointer" onclick="Backend.pickPage(\'' . $strField . '\')"');
+        	$strField = 'ctrl_' . $dc->inputName;
+        	if (version_compare(VERSION, '3.0', '<')){
+            		return ' ' . ContaoController::getInstance()->generateImage('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top;cursor:pointer" onclick="Backend.pickPage(\'' . $strField . '\')"');
+        	} else {
+            		return '<a href="contao/page.php?table='.$dc->table.'&field='.$dc->field.'&value='.str_replace(array('{{link_url::', '}}'), '', $dc->getEnvironment()->getCurrentModel()->getProperty($dc->field)).'" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\''.specialchars($GLOBALS['TL_LANG']['MSC']['pagepicker']).'\',\'url\':this.href,\'id\':\''.$dc->field.'\',\'tag\':\''.$strField.'\',\'self\':this});return false"> '.\Image::getHtml('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top;cursor:pointer"').'</a>';
+        	}
 	}
 
 	/**
