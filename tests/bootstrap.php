@@ -32,4 +32,4 @@ if (
 	exit(1);
 }
 
-$loader->add('MetaModels\Attribute\Timestamp\Test', __DIR__);
+$loader->add('MetaModels\Attribute\Url\Test', __DIR__);
