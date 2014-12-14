@@ -6,6 +6,7 @@
  * data in each collection.
  *
  * PHP version 5
+ *
  * @package    MetaModels
  * @subpackage Core
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
@@ -29,91 +30,107 @@ use MetaModels\IMetaModel;
  */
 class UrlWizardHandler
 {
-	/**
-	 * The MetaModel instance this handler should react on.
-	 *
-	 * @var IMetaModel
-	 */
-	protected $metaModel;
+    /**
+     * The MetaModel instance this handler should react on.
+     *
+     * @var IMetaModel
+     */
+    protected $metaModel;
 
-	/**
-	 * The name of the attribute of the MetaModel this handler should react on.
-	 *
-	 * @var string
-	 */
-	protected $propertyName;
+    /**
+     * The name of the attribute of the MetaModel this handler should react on.
+     *
+     * @var string
+     */
+    protected $propertyName;
 
-	/**
-	 * Create a new instance.
-	 *
-	 * @param IMetaModel $metaModel    The MetaModel instance.
-	 *
-	 * @param string     $propertyName The name of the property.
-	 */
-	public function __construct($metaModel, $propertyName)
-	{
-		$this->metaModel    = $metaModel;
-		$this->propertyName = $propertyName;
-	}
+    /**
+     * Create a new instance.
+     *
+     * @param IMetaModel $metaModel    The MetaModel instance.
+     *
+     * @param string     $propertyName The name of the property.
+     */
+    public function __construct($metaModel, $propertyName)
+    {
+        $this->metaModel    = $metaModel;
+        $this->propertyName = $propertyName;
+    }
 
-	/**
-	 * Build the wizard string.
-	 *
-	 * @param ManipulateWidgetEvent $event The event.
-	 *
-	 * @return void
-	 */
-	public function getWizard(ManipulateWidgetEvent $event)
-	{
-		if ($event->getModel()->getProviderName() !== $this->metaModel->getTableName()
-			|| $event->getProperty()->getName() !== $this->propertyName
-		)
-		{
-			return;
-		}
+    /**
+     * Build the wizard string.
+     *
+     * @param ManipulateWidgetEvent $event The event.
+     *
+     * @return void
+     */
+    public function getWizard(ManipulateWidgetEvent $event)
+    {
+        if ($event->getModel()->getProviderName() !== $this->metaModel->getTableName()
+            || $event->getProperty()->getName() !== $this->propertyName
+        ) {
+            return;
+        }
 
-		$propName   = $event->getProperty()->getName();
-		$model      = $event->getModel();
-		$inputId    = $propName . (!$this->metaModel->getAttribute($this->propertyName)->get('trim_title') ? '_1' : '');
-		$translator = $event->getEnvironment()->getTranslator();
+        $propName   = $event->getProperty()->getName();
+        $model      = $event->getModel();
+        $inputId    = $propName . (!$this->metaModel->getAttribute($this->propertyName)->get('trim_title') ? '_1' : '');
+        $translator = $event->getEnvironment()->getTranslator();
 
-		$GLOBALS['TL_CSS']['metamodelsattribute_url'] = 'system/modules/metamodelsattribute_url/html/style.css';
-		if (version_compare(VERSION, '3.1', '>='))
-		{
-			$currentField = deserialize($model->getProperty($propName), true);
+        $this->addStylesheet('metamodelsattribute_url', 'system/modules/metamodelsattribute_url/html/style.css');
 
-			/** @var GenerateHtmlEvent $imageEvent */
-			$imageEvent = $event->getEnvironment()->getEventPropagator()->propagate(
-				ContaoEvents::IMAGE_GET_HTML,
-				new GenerateHtmlEvent(
-					'pickpage.gif',
-					$translator->translate('pagepicker', 'MSC'),
-					'style="vertical-align:top;cursor:pointer"'
-				)
-			);
+        if (version_compare(VERSION, '3.1', '>=')) {
+            $currentField = deserialize($model->getProperty($propName), true);
 
-			$event->getWidget()->wizard =  ' <a href="contao/page.php?do=' . \Input::get('do') .
-				'&amp;table=' . $this->metaModel->getTableName() . '&amp;field=' . $inputId .
-				'&amp;value=' . str_replace(array('{{link_url::', '}}'), '', $currentField[1]) . '" title="' .
-				specialchars($translator->translate('pagepicker', 'MSC')) .
-				'" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\'' .
-				specialchars(str_replace("'", "\\'", $translator->translate('page.0', 'MOD'))) .
-				'\',\'url\':this.href,\'id\':\'' . $inputId . '\',\'tag\':\'ctrl_' .$inputId . '\',\'self\':this});return false">' .
-				$imageEvent->getHtml() . '</a>';
+            /** @var GenerateHtmlEvent $imageEvent */
+            $imageEvent = $event->getEnvironment()->getEventPropagator()->propagate(
+                ContaoEvents::IMAGE_GET_HTML,
+                new GenerateHtmlEvent(
+                    'pickpage.gif',
+                    $translator->translate('pagepicker', 'MSC'),
+                    'style="vertical-align:top;cursor:pointer"'
+                )
+            );
 
-			return;
-		}
+            $event->getWidget()->wizard = ' <a href="contao/page.php?do=' . \Input::get('do') .
+                '&amp;table=' . $this->metaModel->getTableName() . '&amp;field=' . $inputId .
+                '&amp;value=' . str_replace(array('{{link_url::', '}}'), '', $currentField[1]) . '" title="' .
+                specialchars($translator->translate('pagepicker', 'MSC')) .
+                '" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\'' .
+                specialchars(str_replace("'", "\\'", $translator->translate('page.0', 'MOD'))) .
+                '\',\'url\':this.href,\'id\':\'' . $inputId . '\',\'tag\':\'ctrl_' . $inputId . '\',\'self\':this});' .
+                'return false">' .
+                $imageEvent->getHtml() . '</a>';
 
-		/** @var GenerateHtmlEvent $imageEvent */
-		$imageEvent = $event->getEnvironment()->getEventPropagator()->propagate(
-			ContaoEvents::IMAGE_GET_HTML,
-			new GenerateHtmlEvent(
-				'pickpage.gif',
-				$translator->translate('pagepicker', 'MSC'),
-				'style="vertical-align:top;cursor:pointer" onclick="Backend.pickPage(\'ctrl_' . $inputId . '\')"'
-			)
-		);
+            return;
+        }
 
-		$event->getWidget()->wizard =  ' ' . $imageEvent->getHtml();
-	}
+        /** @var GenerateHtmlEvent $imageEvent */
+        $imageEvent = $event->getEnvironment()->getEventPropagator()->propagate(
+            ContaoEvents::IMAGE_GET_HTML,
+            new GenerateHtmlEvent(
+                'pickpage.gif',
+                $translator->translate('pagepicker', 'MSC'),
+                'style="vertical-align:top;cursor:pointer" onclick="Backend.pickPage(\'ctrl_' . $inputId . '\')"'
+            )
+        );
+
+        $event->getWidget()->wizard = ' ' . $imageEvent->getHtml();
+    }
+
+    /**
+     * Add Stylesheets to the backend.
+     *
+     * @param string $name The Stylesheet name.
+     * @param string $path The Stylesheet file path.
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+     *
+     * @return mixed
+     */
+    public function addStylesheet($name, $path)
+    {
+        return $GLOBALS['TL_CSS'][$name] = $path;
+    }
 }
