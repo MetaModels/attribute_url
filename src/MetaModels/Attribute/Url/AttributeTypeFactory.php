@@ -10,8 +10,8 @@
  * @package    MetaModels
  * @subpackage AttributeUrl
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
- * @copyright  The MetaModels team.
- * @license    LGPL-3+.
+ * @copyright  2012-2016 The MetaModels team.
+ * @license    https://github.com/MetaModels/core/blob/master/LICENSE LGPL-3.0
  * @filesource
  */
 
