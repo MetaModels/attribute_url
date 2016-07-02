@@ -15,8 +15,8 @@
  * @author     Christopher Boelter <christopher@boelter.eu>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     Oliver Hoff <oliver@hofff.com>
- * @copyright  The MetaModels team.
- * @license    LGPL.
+ * @copyright  2012-2016 The MetaModels team.
+ * @license    https://github.com/MetaModels/core/blob/master/LICENSE LGPL-3.0
  * @filesource
  */
 
@@ -28,11 +28,6 @@ use MetaModels\DcGeneral\Events\UrlWizardHandler;
 
 /**
  * This is the MetaModelAttribute class for handling urls.
- *
- * @package    MetaModels
- * @subpackage AttributeUrl
- * @author     Stefan Heimes <stefan_heimes@hotmail.com>
- * @author     Andreas Isaak <info@andreas-isaak.de>
  */
 class Url extends BaseSimple
 {
@@ -107,5 +102,29 @@ class Url extends BaseSimple
         );
 
         return $arrFieldDef;
+    }
+
+    /**
+     * Take the raw data from the DB column and unserialize it.
+     *
+     * @param string $value The input value.
+     *
+     * @return mixed
+     */
+    public function unserializeData($value)
+    {
+        return deserialize($value);
+    }
+
+    /**
+     * Take the unserialized data and serialize it for the native DB column.
+     *
+     * @param mixed $value The input value.
+     *
+     * @return string
+     */
+    public function serializeData($value)
+    {
+        return serialize($value);
     }
 }
