@@ -15,7 +15,7 @@
  * @author     Christopher Boelter <christopher@boelter.eu>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     Oliver Hoff <oliver@hofff.com>
- * @copyright  2012-2015 The MetaModels team.
+ * @copyright  2012-2016 The MetaModels team.
  * @license    https://github.com/MetaModels/core/blob/master/LICENSE LGPL-3.0
  * @filesource
  */
