@@ -1,12 +1,14 @@
 <?php
 
 /**
- * The MetaModels extension allows the creation of multiple collections of custom items,
- * each with its own unique set of selectable attributes, with attribute extendability.
- * The Front-End modules allow you to build powerful listing and filtering of the
- * data in each collection.
+ * This file is part of MetaModels/attribute_url.
  *
- * PHP version 5
+ * (c) 2012-2016 The MetaModels team.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * This project is provided in good faith and hope to be usable by anyone.
  *
  * @package    MetaModels
  * @subpackage AttributeUrl
@@ -15,8 +17,9 @@
  * @author     Christopher Boelter <christopher@boelter.eu>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     Oliver Hoff <oliver@hofff.com>
- * @copyright  The MetaModels team.
- * @license    LGPL.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2012-2016 The MetaModels team.
+ * @license    https://github.com/MetaModels/attribute_file/blob/master/LICENSE LGPL-3.0
  * @filesource
  */
 
@@ -26,14 +29,7 @@ use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\Manip
 use MetaModels\Attribute\BaseSimple;
 use MetaModels\DcGeneral\Events\UrlWizardHandler;
 
-/**
- * This is the MetaModelAttribute class for handling urls.
- *
- * @package    MetaModels
- * @subpackage AttributeUrl
- * @author     Stefan Heimes <stefan_heimes@hotmail.com>
- * @author     Andreas Isaak <info@andreas-isaak.de>
- */
+
 class Url extends BaseSimple
 {
     /**
@@ -107,5 +103,25 @@ class Url extends BaseSimple
         );
 
         return $arrFieldDef;
+    }
+
+    /**
+     * Take the raw data from the DB column and unserialize it.
+     *
+     * @param mixed $value The array of data from the database.
+     *
+     * @return array
+     */
+    public function unserializeData($value)
+    {
+        if (!is_array($value) && (substr($value, 0, 2) == 'a:')) {
+            $unSerialized = unserialize($value);
+        }
+
+        if (isset($unSerialized) && is_array($unSerialized)) {
+            return $unSerialized;
+        }
+
+        return $value;
     }
 }
