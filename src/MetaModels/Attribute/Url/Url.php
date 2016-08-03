@@ -108,4 +108,37 @@ class Url extends BaseSimple
 
         return $arrFieldDef;
     }
+    
+    /**
+     * Take the raw data from the DB column and unserialize it.
+     *
+     * @param $value The array of data from the database.
+     *
+     * @return $value
+     */
+    public function unserializeData($value)
+    {
+        return deserialize($value, true);
+    }
+	
+    /**
+     * Take the data from the system and serialize it for the database.
+     *
+     * @param $value The data to serialize.
+     *
+     * @return $value as array
+     */
+    public function serializeData($value)
+    {
+        if ($value === null) {
+            $value = array();
+        }
+        $value = serialize($value);
+
+        return $value;
+    }
+	
+    
+    
+    
 }
