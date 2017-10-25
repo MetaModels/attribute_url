@@ -19,7 +19,7 @@
  * @filesource
  */
 
-namespace MetaModels\DcGeneral\Events;
+namespace MetaModels\Attribute\Url\DcGeneral\Events;
 
 use ContaoCommunityAlliance\Contao\Bindings\ContaoEvents;
 use ContaoCommunityAlliance\Contao\Bindings\Events\Image\GenerateHtmlEvent;
