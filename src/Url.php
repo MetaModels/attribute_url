@@ -28,7 +28,7 @@ namespace MetaModels\Attribute\Url;
 
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
 use MetaModels\Attribute\BaseSimple;
-use MetaModels\DcGeneral\Events\UrlWizardHandler;
+use MetaModels\Attribute\Url\DcGeneral\Events\UrlWizardHandler;
 
 /**
  * This is the MetaModelAttribute class for handling urls.
