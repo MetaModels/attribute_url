@@ -20,7 +20,9 @@
 
 namespace MetaModels\Attribute\Url;
 
+use Doctrine\DBAL\Connection;
 use MetaModels\Attribute\AbstractAttributeTypeFactory;
+use MetaModels\Helper\TableManipulator;
 
 /**
  * Attribute type factory for translated url attributes.
@@ -30,9 +32,9 @@ class AttributeTypeFactory extends AbstractAttributeTypeFactory
     /**
      * {@inheritDoc}
      */
-    public function __construct()
+    public function __construct(Connection $connection, TableManipulator $tableManipulator)
     {
-        parent::__construct();
+        parent::__construct($connection, $tableManipulator);
 
         $this->typeName  = 'url';
         $this->typeIcon  = 'bundles/metamodelsattributeurl/url.png';
