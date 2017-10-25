@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2016 The MetaModels team.
+ * (c) 2012-2017 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,22 +14,25 @@
  * @subpackage Tests
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     Christopher Boelter <christopher@boelter.eu>
- * @copyright  2012-2016 The MetaModels team.
+ * @author     David Molineus <david.molineus@netzmacht.de>
+ * @copyright  2012-2017 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0
  * @filesource
  */
 
 namespace MetaModels\Test\Attribute\Url;
 
+use Doctrine\DBAL\Connection;
 use MetaModels\Attribute\IAttributeTypeFactory;
 use MetaModels\Attribute\Url\AttributeTypeFactory;
+use MetaModels\Helper\TableManipulator;
 use MetaModels\IMetaModel;
-use MetaModels\Test\Attribute\AttributeTypeFactoryTest;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test the attribute factory.
  */
-class UrlAttributeTypeFactoryTest extends AttributeTypeFactoryTest
+class UrlAttributeTypeFactoryTest extends TestCase
 {
     /**
      * Mock a MetaModel.
@@ -44,11 +47,7 @@ class UrlAttributeTypeFactoryTest extends AttributeTypeFactoryTest
      */
     protected function mockMetaModel($tableName, $language, $fallbackLanguage)
     {
-        $metaModel = $this->getMock(
-            'MetaModels\MetaModel',
-            array(),
-            array(array())
-        );
+        $metaModel = $this->getMockBuilder('MetaModels\IMetaModel')->getMock();
 
         $metaModel
             ->expects($this->any())
@@ -69,13 +68,42 @@ class UrlAttributeTypeFactoryTest extends AttributeTypeFactoryTest
     }
 
     /**
+     * Mock the database connection.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
+     */
+    private function mockConnection()
+    {
+        return $this->getMockBuilder(Connection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * Mock the table manipulator.
+     *
+     * @param Connection $connection The database connection mock.
+     *
+     * @return TableManipulator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function mockTableManipulator(Connection $connection)
+    {
+        return $this->getMockBuilder(TableManipulator::class)
+            ->setConstructorArgs([$connection, []])
+            ->getMock();
+    }
+
+    /**
      * Override the method to run the tests on the attribute factories to be tested.
      *
      * @return IAttributeTypeFactory[]
      */
     protected function getAttributeFactories()
     {
-        return array(new AttributeTypeFactory());
+        $connection  = $this->mockConnection();
+        $manipulator = $this->mockTableManipulator($connection);
+
+        return array(new AttributeTypeFactory($connection, $manipulator));
     }
 
     /**
@@ -85,7 +113,10 @@ class UrlAttributeTypeFactoryTest extends AttributeTypeFactoryTest
      */
     public function testCreateTags()
     {
-        $factory   = new AttributeTypeFactory();
+        $connection  = $this->mockConnection();
+        $manipulator = $this->mockTableManipulator($connection);
+
+        $factory   = new AttributeTypeFactory($connection, $manipulator);
         $values    = array();
         $attribute = $factory->createInstance(
             $values,

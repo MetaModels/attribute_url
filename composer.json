@@ -48,6 +48,11 @@
       "MetaModels\\Attribute\\Url\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "MetaModels\\Test\\Attribute\\Url\\": "tests/Test"
+    }
+  },
   "extra": {
     "contao-manager-plugin": "MetaModels\\Attribute\\Url\\ContaoManager\\Plugin",
     "contao": {

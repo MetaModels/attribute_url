@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2016 The MetaModels team.
+ * (c) 2012-2017 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,20 +14,24 @@
  * @subpackage Tests
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     Christopher Boelter <christopher@boelter.eu>
- * @copyright  2012-2016 The MetaModels team.
+ * @author     David Molineus <david.molineus@netzmacht.de>
+ * @copyright  2012-2017 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0
  * @filesource
  */
 
 namespace MetaModels\Test\Attribute\Url;
 
+use Doctrine\DBAL\Connection;
 use MetaModels\Attribute\Url\Url;
+use MetaModels\Helper\TableManipulator;
 use MetaModels\IMetaModel;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests to test class Url.
  */
-class UrlTest extends \PHPUnit_Framework_TestCase
+class UrlTest extends TestCase
 {
     /**
      * Mock a MetaModel.
@@ -39,11 +43,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
      */
     protected function mockMetaModel($language, $fallbackLanguage)
     {
-        $metaModel = $this->getMock(
-            'MetaModels\MetaModel',
-            array(),
-            array(array())
-        );
+        $metaModel = $this->getMockBuilder('MetaModels\IMetaModel')->getMock();
 
         $metaModel
             ->expects($this->any())
@@ -64,13 +64,42 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Mock the database connection.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
+     */
+    private function mockConnection()
+    {
+        return $this->getMockBuilder(Connection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * Mock the table manipulator.
+     *
+     * @param Connection $connection The database connection mock.
+     *
+     * @return TableManipulator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function mockTableManipulator(Connection $connection)
+    {
+        return $this->getMockBuilder(TableManipulator::class)
+            ->setConstructorArgs([$connection, []])
+            ->getMock();
+    }
+
+    /**
      * Test that the attribute can be instantiated.
      *
      * @return void
      */
     public function testInstantiation()
     {
-        $url = new Url($this->mockMetaModel('en', 'en'));
+        $connection  = $this->mockConnection();
+        $manipulator = $this->mockTableManipulator($connection);
+
+        $url = new Url($this->mockMetaModel('en', 'en'), [], $connection, $manipulator);
         $this->assertInstanceOf('MetaModels\Attribute\Url\Url', $url);
     }
 }
