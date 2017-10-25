@@ -79,7 +79,7 @@ class UrlWizardHandler
         $inputId    = $propName . (!$this->metaModel->getAttribute($this->propertyName)->get('trim_title') ? '_1' : '');
         $translator = $event->getEnvironment()->getTranslator();
 
-        $this->addStylesheet('metamodelsattribute_url', 'system/modules/metamodelsattribute_url/html/style.css');
+        $this->addStylesheet('metamodelsattribute_url', 'bundles/metamodelsattributeurl/style.css');
 
         $currentField = deserialize($model->getProperty($propName), true);
 

@@ -33,8 +33,9 @@ class AttributeTypeFactory extends AbstractAttributeTypeFactory
     public function __construct()
     {
         parent::__construct();
+
         $this->typeName  = 'url';
-        $this->typeIcon  = 'system/modules/metamodelsattribute_url/html/url.png';
-        $this->typeClass = 'MetaModels\Attribute\Url\Url';
+        $this->typeIcon  = 'bundles/metamodelsattributeurl/url.png';
+        $this->typeClass = Url::class;
     }
 }
