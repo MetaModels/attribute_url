@@ -1,6 +1,6 @@
 services:
     metamodels.attribute_url.factory:
-        class: MetaModels\Attribute\Url\AttributeTypeFactory
+        class: MetaModels\AttributeUrlBundle\Attribute\AttributeTypeFactory
         arguments:
             - '@database_connection'
             - '@metamodels.table_manipulator'

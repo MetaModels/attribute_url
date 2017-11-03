@@ -19,10 +19,11 @@
  * @filesource
  */
 
-namespace MetaModels\Attribute\Url;
+namespace MetaModels\AttributeUrlBundle\Attribute;
 
 use Doctrine\DBAL\Connection;
 use MetaModels\Attribute\AbstractSimpleAttributeTypeFactory;
+use MetaModels\AttributeUrlBundle\Attribute\Url;
 use MetaModels\Helper\TableManipulator;
 
 /**

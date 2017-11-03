@@ -18,10 +18,10 @@
  * @filesource
  */
 
-namespace MetaModels\Test\Attribute\Url\DependencyInjection;
+namespace MetaModels\AttributeUrlBundle\Test\DependencyInjection;
 
-use MetaModels\Attribute\Url\AttributeTypeFactory;
-use MetaModels\Attribute\Url\DependencyInjection\MetaModelsAttributeUrlExtension;
+use MetaModels\AttributeUrlBundle\Attribute\AttributeTypeFactory;
+use MetaModels\AttributeUrlBundle\DependencyInjection\MetaModelsAttributeUrlExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;

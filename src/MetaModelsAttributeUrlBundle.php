@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace MetaModels\Attribute\Url;
+namespace MetaModels\AttributeUrlBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
