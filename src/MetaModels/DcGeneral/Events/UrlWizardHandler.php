@@ -79,9 +79,6 @@ class UrlWizardHandler
         $model      = $event->getModel();
         $inputId    = $propName . (!$this->metaModel->getAttribute($this->propertyName)->get('trim_title') ? '_1' : '');
         $translator = $event->getEnvironment()->getTranslator();
-
-        $this->addStylesheet('metamodelsattribute_url', 'system/modules/metamodelsattribute_url/html/style.css');
-
         $currentField = deserialize($model->getProperty($propName), true);
 
         /** @var GenerateHtmlEvent $imageEvent */
@@ -107,19 +104,4 @@ class UrlWizardHandler
                                       'return false">' . $imageEvent->getHtml() . '</a>';
     }
 
-    /**
-     * Add the stylesheet to the backend.
-     *
-     * @param string $name Name The name-key of the file.
-     * @param string $file File The filepath on the filesystem.
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
-     *
-     * @return void
-     */
-    protected function addStylesheet($name, $file)
-    {
-        $GLOBALS['TL_CSS'][$name] = $file;
-    }
 }
