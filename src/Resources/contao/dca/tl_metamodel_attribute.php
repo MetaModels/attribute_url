@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2017 The MetaModels team.
+ * (c) 2012-2018 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,7 +17,8 @@
  * @author     Andreas Isaak <info@andreas-isaak.de>
  * @author     Christopher Boelter <christopher@boelter.eu>
  * @author     David Molineus <david.molineus@netzmacht.de>
- * @copyright  2012-2017 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2012-2018 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0
  * @filesource
  */
@@ -35,5 +36,6 @@ $GLOBALS['TL_DCA']['tl_metamodel_attribute']['fields']['trim_title'] = array(
     'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_attribute']['trim_title'],
     'exclude'   => true,
     'inputType' => 'checkbox',
+    'sql'       => 'char(1) NOT NULL default \'\'',
     'eval'      => array('tl_class' => 'clr')
 );
