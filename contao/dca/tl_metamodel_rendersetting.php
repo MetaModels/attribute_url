@@ -16,6 +16,7 @@
  * @author     Andreas Isaak <info@andreas-isaak.de>
  * @author     Christopher Boelter <christopher@boelter.eu>
  * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @author     Sven Baumann <baumann.sv@gmail.com>
  * @copyright  2012-2018 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0
  * @filesource
@@ -25,14 +26,12 @@
  * Table tl_metamodel_rendersetting
  */
 
-$GLOBALS['TL_DCA']['tl_metamodel_rendersetting']['metapalettes']['url extends default'] = array
-(
-    '+advanced' => array('no_external_link'),
-);
+$GLOBALS['TL_DCA']['tl_metamodel_rendersetting']['metapalettes']['url extends default'] = [
+    '+advanced' => ['no_external_link'],
+];
 
-$GLOBALS['TL_DCA']['tl_metamodel_rendersetting']['fields']['no_external_link'] = array
-(
+$GLOBALS['TL_DCA']['tl_metamodel_rendersetting']['fields']['no_external_link'] = [
     'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_rendersetting']['no_external_link'],
     'inputType' => 'checkbox',
     'sql'       => 'char(1) NOT NULL default \'\'',
-);
+];

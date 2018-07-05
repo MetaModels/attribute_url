@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2016 The MetaModels team.
+ * (c) 2012-2018 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,8 +17,8 @@
  * @author     Andreas Isaak <info@andreas-isaak.de>
  * @author     Christopher Boelter <christopher@boelter.eu>
  * @author     Oliver Hoff <oliver@hofff.com>
- * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2012-2016 The MetaModels team.
+ * @author     Sven Baumann <baumann.sv@gmail.com>
+ * @copyright  2012-2018 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0
  * @filesource
  */
@@ -47,11 +47,14 @@ class Url extends BaseSimple
      */
     public function getAttributeSettingNames()
     {
-        return array_merge(parent::getAttributeSettingNames(), array(
-            'no_external_link',
-            'mandatory',
-            'trim_title'
-        ));
+        return array_merge(
+            parent::getAttributeSettingNames(),
+            [
+                'no_external_link',
+                'mandatory',
+                'trim_title'
+            ]
+        );
     }
 
     /**
@@ -64,7 +67,7 @@ class Url extends BaseSimple
         }
 
         if ($varValue === null) {
-            $varValue = $this->get('trim_title') ? null : array(0 => '', 1 => '');
+            $varValue = $this->get('trim_title') ? null : [0 => '', 1 => ''];
         }
 
         return parent::valueToWidget($varValue);
@@ -76,7 +79,7 @@ class Url extends BaseSimple
     public function widgetToValue($varValue, $intId)
     {
         if ($this->get('trim_title') && !is_array($varValue)) {
-            $varValue = array(0 => '', 1 => $varValue);
+            $varValue = [0 => '', 1 => $varValue];
         }
 
         if (($this->get('trim_title') && empty($varValue[1])) ||
@@ -91,7 +94,7 @@ class Url extends BaseSimple
     /**
      * {@inheritdoc}
      */
-    public function getFieldDefinition($arrOverrides = array())
+    public function getFieldDefinition($arrOverrides = [])
     {
         $arrFieldDef = parent::getFieldDefinition($arrOverrides);
 
@@ -111,7 +114,7 @@ class Url extends BaseSimple
         $dispatcher = $this->getMetaModel()->getServiceContainer()->getEventDispatcher();
         $dispatcher->addListener(
             ManipulateWidgetEvent::NAME,
-            array(new UrlWizardHandler($this->getMetaModel(), $this->getColName()), 'getWizard')
+            [new UrlWizardHandler($this->getMetaModel(), $this->getColName()), 'getWizard']
         );
 
         return $arrFieldDef;
