@@ -17,6 +17,7 @@
  * @author     Andreas Isaak <info@andreas-isaak.de>
  * @author     Christopher Boelter <christopher@boelter.eu>
  * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @author     Sven Baumann <baumann.sv@gmail.com>
  * @copyright  2012-2018 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0
  * @filesource
@@ -26,15 +27,14 @@
  * Table tl_metamodel_attribute
  */
 
-$GLOBALS['TL_DCA']['tl_metamodel_attribute']['metapalettes']['url extends _simpleattribute_'] = array
-(
-    '+display' => array('trim_title')
-);
+$GLOBALS['TL_DCA']['tl_metamodel_attribute']['metapalettes']['url extends _simpleattribute_'] = [
+    '+display' => ['trim_title']
+];
 
-$GLOBALS['TL_DCA']['tl_metamodel_attribute']['fields']['trim_title'] = array(
+$GLOBALS['TL_DCA']['tl_metamodel_attribute']['fields']['trim_title'] = [
     'label'     => &$GLOBALS['TL_LANG']['tl_metamodel_attribute']['trim_title'],
     'exclude'   => true,
     'inputType' => 'checkbox',
     'sql'       => 'char(1) NOT NULL default \'\'',
-    'eval'      => array('tl_class' => 'clr')
-);
+    'eval'      => ['tl_class' => 'clr']
+];
