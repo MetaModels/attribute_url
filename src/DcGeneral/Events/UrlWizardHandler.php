@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2017 The MetaModels team.
+ * (c) 2012-2018 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,13 +17,15 @@
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     David Molineus <david.molineus@netzmacht.de>
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
- * @copyright  2012-2016 The MetaModels team.
+ * @author     Sven Baumann <baumann.sv@gmail.com>
+ * @copyright  2012-2018 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0
  * @filesource
  */
 
 namespace MetaModels\AttributeUrlBundle\DcGeneral\Events;
 
+use Contao\StringUtil;
 use ContaoCommunityAlliance\Contao\Bindings\ContaoEvents;
 use ContaoCommunityAlliance\Contao\Bindings\Events\Image\GenerateHtmlEvent;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
@@ -84,7 +86,7 @@ class UrlWizardHandler
 
         $this->addStylesheet('metamodelsattribute_url', 'bundles/metamodelsattributeurl/style.css');
 
-        $currentField = deserialize($model->getProperty($propName), true);
+        $currentField = \deserialize($model->getProperty($propName), true);
 
         /** @var GenerateHtmlEvent $imageEvent */
         $imageEvent = $event->getEnvironment()->getEventDispatcher()->dispatch(
@@ -98,12 +100,14 @@ class UrlWizardHandler
 
         $event->getWidget()->wizard = ' <a href="contao/page.php?do=' . \Input::get('do') .
                                       '&amp;table=' . $this->metaModel->getTableName() . '&amp;field=' . $inputId .
-                                      '&amp;value=' . str_replace(array('{{link_url::', '}}'), '', $currentField[1])
+                                      '&amp;value=' . str_replace(['{{link_url::', '}}'], '', $currentField[1])
                                       . '" title="' .
-                                      specialchars($translator->translate('pagepicker', 'MSC')) .
+                                      StringUtil::specialchars($translator->translate('pagepicker', 'MSC')) .
                                       '" onclick="Backend.getScrollOffset();'.
                                       'Backend.openModalSelector({\'width\':765,\'title\':\'' .
-                                      specialchars(str_replace("'", "\\'", $translator->translate('page.0', 'MOD'))) .
+                                      StringUtil::specialchars(
+                                          str_replace("'", "\\'", $translator->translate('page.0', 'MOD'))
+                                      ) .
                                       '\',\'url\':this.href,\'id\':\'' . $inputId . '\',\'tag\':\'ctrl_' . $inputId
                                       . '\',\'self\':this});' .
                                       'return false">' . $imageEvent->getHtml() . '</a>';
