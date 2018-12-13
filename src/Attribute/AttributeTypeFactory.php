@@ -23,23 +23,85 @@
 namespace MetaModels\AttributeUrlBundle\Attribute;
 
 use Doctrine\DBAL\Connection;
-use MetaModels\Attribute\AbstractSimpleAttributeTypeFactory;
+use MetaModels\Attribute\IAttributeTypeFactory;
+use MetaModels\AttributeUrlBundle\DcGeneral\Events\UrlWizardHandler;
 use MetaModels\Helper\TableManipulator;
+use Psr\Container\ContainerInterface;
 
 /**
  * Attribute type factory for translated url attributes.
  */
-class AttributeTypeFactory extends AbstractSimpleAttributeTypeFactory
+class AttributeTypeFactory implements IAttributeTypeFactory
 {
+    /**
+     * The database connection.
+     *
+     * @var ContainerInterface
+     */
+    private $container;
+
     /**
      * {@inheritDoc}
      */
-    public function __construct(Connection $connection, TableManipulator $tableManipulator)
+    public function __construct(ContainerInterface $container)
     {
-        parent::__construct($connection, $tableManipulator);
+        $this->container = $container;
+    }
 
-        $this->typeName  = 'url';
-        $this->typeIcon  = 'bundles/metamodelsattributeurl/url.png';
-        $this->typeClass = Url::class;
+    /**
+     * {@inheritDoc}
+     */
+    public function getTypeName()
+    {
+        return 'url';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTypeIcon()
+    {
+        return 'bundles/metamodelsattributeurl/url.png';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createInstance($information, $metaModel)
+    {
+        $attribute = new Url(
+            $metaModel,
+            $information,
+            $this->container->get(Connection::class),
+            $this->container->get(TableManipulator::class)
+        );
+
+        $this->container->get(UrlWizardHandler::class)->watch($attribute);
+
+        return $attribute;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isTranslatedType()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isSimpleType()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isComplexType()
+    {
+        return false;
     }
 }

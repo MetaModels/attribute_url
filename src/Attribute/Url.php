@@ -27,9 +27,7 @@
 
 namespace MetaModels\AttributeUrlBundle\Attribute;
 
-use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
 use MetaModels\Attribute\BaseSimple;
-use MetaModels\AttributeUrlBundle\DcGeneral\Events\UrlWizardHandler;
 
 /**
  * This is the MetaModelAttribute class for handling urls.
@@ -112,13 +110,6 @@ class Url extends BaseSimple
             $arrFieldDef['eval']['tl_class'] .= ' metamodelsattribute_url';
         }
 
-        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
-        $dispatcher = $this->getMetaModel()->getServiceContainer()->getEventDispatcher();
-        $dispatcher->addListener(
-            ManipulateWidgetEvent::NAME,
-            [new UrlWizardHandler($this->getMetaModel(), $this->getColName()), 'getWizard']
-        );
-
         return $arrFieldDef;
     }
 
@@ -135,8 +126,8 @@ class Url extends BaseSimple
             return $value;
         }
 
-        if (\substr($value, 0, 2) == 'a:') {
-            return \unserialize($value);
+        if (0 === strpos($value, 'a:')) {
+            return \unserialize($value, ['allowed_classes' => false]);
         }
 
         return $value;

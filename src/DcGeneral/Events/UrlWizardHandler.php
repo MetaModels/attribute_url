@@ -29,7 +29,7 @@ use Contao\StringUtil;
 use ContaoCommunityAlliance\Contao\Bindings\ContaoEvents;
 use ContaoCommunityAlliance\Contao\Bindings\Events\Image\GenerateHtmlEvent;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
-use MetaModels\IMetaModel;
+use MetaModels\AttributeUrlBundle\Attribute\Url;
 
 /**
  * This class adds the file picker wizard to the file picker widgets if necessary.
@@ -39,29 +39,22 @@ use MetaModels\IMetaModel;
 class UrlWizardHandler
 {
     /**
-     * The MetaModel instance this handler should react on.
-     *
-     * @var IMetaModel
-     */
-    protected $metaModel;
-
-    /**
      * The name of the attribute of the MetaModel this handler should react on.
      *
-     * @var string
+     * @var string[][]
      */
-    protected $propertyName;
+    private $propertyNames = [];
 
     /**
-     * Create a new instance.
+     * Register an attribute
      *
-     * @param IMetaModel $metaModel    The MetaModel instance.
-     * @param string     $propertyName The name of the property.
+     * @param Url $attribute The attribute.
+     *
+     * @return void
      */
-    public function __construct($metaModel, $propertyName)
+    public function watch(Url $attribute)
     {
-        $this->metaModel    = $metaModel;
-        $this->propertyName = $propertyName;
+        $this->propertyNames[$attribute->getMetaModel()->getTableName()][$attribute->getColName()] = $attribute;
     }
 
     /**
@@ -71,17 +64,20 @@ class UrlWizardHandler
      *
      * @return void
      */
-    public function getWizard(ManipulateWidgetEvent $event)
+    public function __invoke(ManipulateWidgetEvent $event)
     {
-        if ($event->getModel()->getProviderName() !== $this->metaModel->getTableName()
-            || $event->getProperty()->getName() !== $this->propertyName
-        ) {
+        $tableName = $event->getModel()->getProviderName();
+        $propName  = $event->getProperty()->getName();
+
+        if (!isset($this->propertyNames[$tableName][$propName])) {
             return;
         }
+        /** @var Url $attribute */
+        $attribute = $this->propertyNames[$tableName][$propName];
+        dump($attribute);
 
-        $propName   = $event->getProperty()->getName();
         $model      = $event->getModel();
-        $inputId    = $propName . (!$this->metaModel->getAttribute($this->propertyName)->get('trim_title') ? '_1' : '');
+        $inputId    = $propName . (!$attribute->get('trim_title') ? '_1' : '');
         $translator = $event->getEnvironment()->getTranslator();
 
         $this->addStylesheet('metamodelsattribute_url', 'bundles/metamodelsattributeurl/style.css');
@@ -99,7 +95,7 @@ class UrlWizardHandler
         );
 
         $event->getWidget()->wizard = ' <a href="contao/page.php?do=' . \Input::get('do') .
-                                      '&amp;table=' . $this->metaModel->getTableName() . '&amp;field=' . $inputId .
+                                      '&amp;table=' . $tableName . '&amp;field=' . $inputId .
                                       '&amp;value=' . str_replace(['{{link_url::', '}}'], '', $currentField[1])
                                       . '" title="' .
                                       StringUtil::specialchars($translator->translate('pagepicker', 'MSC')) .
