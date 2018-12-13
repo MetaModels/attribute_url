@@ -73,7 +73,6 @@ class UrlWizardHandler
         }
         /** @var Url $attribute */
         $attribute = $this->propertyNames[$tableName][$propName];
-        dump($attribute);
 
         $model      = $event->getModel();
         $inputId    = $propName . (!$attribute->get('trim_title') ? '_1' : '');
