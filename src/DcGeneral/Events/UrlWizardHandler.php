@@ -16,7 +16,6 @@
  * @author     Christopher Boelter <christopher@boelter.eu>
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     David Molineus <david.molineus@netzmacht.de>
- * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @copyright  2012-2018 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0
