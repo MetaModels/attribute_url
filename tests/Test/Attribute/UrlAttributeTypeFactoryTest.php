@@ -26,9 +26,11 @@ use Doctrine\DBAL\Connection;
 use MetaModels\Attribute\IAttributeTypeFactory;
 use MetaModels\AttributeUrlBundle\Attribute\AttributeTypeFactory;
 use MetaModels\AttributeUrlBundle\Attribute\Url;
+use MetaModels\AttributeUrlBundle\DcGeneral\Events\UrlWizardHandler;
 use MetaModels\Helper\TableManipulator;
 use MetaModels\IMetaModel;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Test the attribute factory.
@@ -53,17 +55,17 @@ class UrlAttributeTypeFactoryTest extends TestCase
         $metaModel
             ->expects($this->any())
             ->method('getTableName')
-            ->will($this->returnValue($tableName));
+            ->willReturn($tableName);
 
         $metaModel
             ->expects($this->any())
             ->method('getActiveLanguage')
-            ->will($this->returnValue($language));
+            ->willReturn($language);
 
         $metaModel
             ->expects($this->any())
             ->method('getFallbackLanguage')
-            ->will($this->returnValue($fallbackLanguage));
+            ->willReturn($fallbackLanguage);
 
         return $metaModel;
     }
@@ -101,10 +103,15 @@ class UrlAttributeTypeFactoryTest extends TestCase
      */
     protected function getAttributeFactories()
     {
+        $container   = new Container();
         $connection  = $this->mockConnection();
         $manipulator = $this->mockTableManipulator($connection);
 
-        return [new AttributeTypeFactory($connection, $manipulator)];
+        $container->set(Connection::class, $connection);
+        $container->set(TableManipulator::class, $manipulator);
+        $container->set(UrlWizardHandler::class, new UrlWizardHandler());
+
+        return [new AttributeTypeFactory($container)];
     }
 
     /**
@@ -112,13 +119,18 @@ class UrlAttributeTypeFactoryTest extends TestCase
      *
      * @return void
      */
-    public function testCreateTags()
+    public function testCreateUrl()
     {
+        $container   = new Container();
         $connection  = $this->mockConnection();
         $manipulator = $this->mockTableManipulator($connection);
 
-        $factory   = new AttributeTypeFactory($connection, $manipulator);
-        $values    = [];
+        $container->set(Connection::class, $connection);
+        $container->set(TableManipulator::class, $manipulator);
+        $container->set(UrlWizardHandler::class, new UrlWizardHandler());
+
+        $factory   = new AttributeTypeFactory($container);
+        $values    = ['colname' => 'test'];
         $attribute = $factory->createInstance(
             $values,
             $this->mockMetaModel('mm_test', 'de', 'en')

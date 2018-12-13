@@ -13,6 +13,7 @@
  * @package    MetaModels
  * @subpackage AttributeUrl
  * @author     David Molineus <david.molineus@netzmacht.de>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @copyright  2012-2017 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_text/blob/master/LICENSE LGPL-3.0
  * @filesource
@@ -21,11 +22,13 @@
 namespace MetaModels\AttributeUrlBundle\Test\DependencyInjection;
 
 use MetaModels\AttributeUrlBundle\Attribute\AttributeTypeFactory;
+use MetaModels\AttributeUrlBundle\DcGeneral\Events\UrlWizardHandler;
 use MetaModels\AttributeUrlBundle\DependencyInjection\MetaModelsAttributeUrlExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 /**
  * This test case test the extension.
@@ -55,20 +58,47 @@ class MetaModelsAttributeUrlExtensionTest extends TestCase
         $container = $this->getMockBuilder(ContainerBuilder::class)->getMock();
 
         $container
-            ->expects($this->once())
+            ->expects($this->exactly(3))
             ->method('setDefinition')
-            ->with(
-                'metamodels.attribute_url.factory',
-                $this->callback(
-                    function ($value) {
-                        /** @var Definition $value */
-                        $this->assertInstanceOf(Definition::class, $value);
-                        $this->assertEquals(AttributeTypeFactory::class, $value->getClass());
-                        $this->assertCount(1, $value->getTag('metamodels.attribute_factory'));
+            ->withConsecutive(
+                [
+                    'metamodels.attribute_url.factory',
+                    $this->callback(
+                        function ($value) {
+                            /** @var Definition $value */
+                            $this->assertInstanceOf(Definition::class, $value);
+                            $this->assertEquals(AttributeTypeFactory::class, $value->getClass());
+                            $this->assertCount(1, $value->getTag('metamodels.attribute_factory'));
 
-                        return true;
-                    }
-                )
+                            return true;
+                        }
+                    )
+                ],
+                [
+                    'metamodels.attribute_url.factory.container',
+                    $this->callback(
+                        function ($value) {
+                            /** @var Definition $value */
+                            $this->assertInstanceOf(Definition::class, $value);
+                            $this->assertEquals(ServiceLocator::class, $value->getClass());
+                            $this->assertCount(1, $value->getTag('container.service_locator'));
+
+                            return true;
+                        }
+                    )
+                ],
+                [
+                    UrlWizardHandler::class,
+                    $this->callback(
+                        function ($value) {
+                            /** @var Definition $value */
+                            $this->assertInstanceOf(Definition::class, $value);
+                            $this->assertCount(1, $value->getTag('kernel.event_listener'));
+
+                            return true;
+                        }
+                    )
+                ]
             );
 
         $extension = new MetaModelsAttributeUrlExtension();
