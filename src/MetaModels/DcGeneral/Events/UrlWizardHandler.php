@@ -29,8 +29,6 @@ use MetaModels\IMetaModel;
 
 /**
  * This class adds the file picker wizard to the file picker widgets if necessary.
- *
- * @package MetaModels\DcGeneral\Events
  */
 class UrlWizardHandler
 {
