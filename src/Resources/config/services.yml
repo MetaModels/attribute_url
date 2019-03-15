@@ -1,0 +1,20 @@
+services:
+    metamodels.attribute_url.factory:
+        class: MetaModels\AttributeUrlBundle\Attribute\AttributeTypeFactory
+        arguments:
+            - '@metamodels.attribute_url.factory.container'
+        tags:
+          - { name: metamodels.attribute_factory }
+
+    metamodels.attribute_url.factory.container:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        arguments:
+            -
+                Doctrine\DBAL\Connection: '@database_connection'
+                MetaModels\Helper\TableManipulator: '@metamodels.table_manipulator'
+                MetaModels\AttributeUrlBundle\DcGeneral\Events\UrlWizardHandler: '@MetaModels\AttributeUrlBundle\DcGeneral\Events\UrlWizardHandler'
+        tags: ['container.service_locator']
+
+    MetaModels\AttributeUrlBundle\DcGeneral\Events\UrlWizardHandler:
+        tags:
+            - { name: kernel.event_listener, event: 'dc-general.view.contao2backend.manipulate-widget', method: '__invoke' }

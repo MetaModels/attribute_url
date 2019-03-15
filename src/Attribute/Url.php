@@ -18,16 +18,15 @@
  * @author     Oliver Hoff <oliver@hofff.com>
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @author     David Molineus <david.molineus@netzmacht.de>
  * @copyright  2012-2019 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
 
-namespace MetaModels\Attribute\Url;
+namespace MetaModels\AttributeUrlBundle\Attribute;
 
-use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
 use MetaModels\Attribute\BaseSimple;
-use MetaModels\DcGeneral\Events\UrlWizardHandler;
 
 /**
  * This is the MetaModelAttribute class for handling urls.
@@ -62,7 +61,7 @@ class Url extends BaseSimple
      */
     public function valueToWidget($varValue)
     {
-        if ($this->get('trim_title') && is_array($varValue)) {
+        if ($this->get('trim_title') && \is_array($varValue)) {
             $varValue = $varValue[1];
         }
 
@@ -78,7 +77,7 @@ class Url extends BaseSimple
      */
     public function widgetToValue($varValue, $intId)
     {
-        if ($this->get('trim_title') && !is_array($varValue)) {
+        if ($this->get('trim_title') && !\is_array($varValue)) {
             $varValue = [0 => '', 1 => $varValue];
         }
 
@@ -110,13 +109,6 @@ class Url extends BaseSimple
             $arrFieldDef['eval']['tl_class'] .= ' metamodelsattribute_url';
         }
 
-        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
-        $dispatcher = $this->getMetaModel()->getServiceContainer()->getEventDispatcher();
-        $dispatcher->addListener(
-            ManipulateWidgetEvent::NAME,
-            [new UrlWizardHandler($this->getMetaModel(), $this->getColName()), 'getWizard']
-        );
-
         return $arrFieldDef;
     }
 
@@ -129,12 +121,12 @@ class Url extends BaseSimple
      */
     public function unserializeData($value)
     {
-        if (is_array($value)) {
+        if (\is_array($value)) {
             return $value;
         }
 
-        if (substr($value, 0, 2) == 'a:') {
-            return unserialize($value);
+        if (0 === strpos($value, 'a:')) {
+            return \unserialize($value, ['allowed_classes' => false]);
         }
 
         return $value;
@@ -145,6 +137,6 @@ class Url extends BaseSimple
      */
     public function serializeData($value)
     {
-        return is_array($value) ? serialize($value) : $value;
+        return \is_array($value) ? \serialize($value) : $value;
     }
 }
