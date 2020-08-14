@@ -8,5 +8,4 @@ For documentation visit:
 -->
 <project name="metamodels/attribute_url" default="build">
     <import file="vendor/phpcq/phpcq/phpcq.main.xml"/>
-    <target name="phpspec" />
 </project>
