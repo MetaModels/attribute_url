@@ -82,12 +82,12 @@ class UrlWizardHandler
 
         /** @var GenerateHtmlEvent $imageEvent */
         $imageEvent = $event->getEnvironment()->getEventDispatcher()->dispatch(
-            ContaoEvents::IMAGE_GET_HTML,
             new GenerateHtmlEvent(
                 'pickpage.svg',
                 $translator->translate('pagepicker', 'MSC'),
                 'style="vertical-align:text-bottom;cursor:pointer;width:20px;height:20px;"'
-            )
+            ),
+            ContaoEvents::IMAGE_GET_HTML
         );
 
         $event->getWidget()->wizard = ' <a href="contao/page.php?do=' . \Input::get('do') .
