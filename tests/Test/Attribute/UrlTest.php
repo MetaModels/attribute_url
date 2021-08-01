@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2019 The MetaModels team.
+ * (c) 2012-2021 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,7 +15,8 @@
  * @author     Christopher Boelter <christopher@boelter.eu>
  * @author     David Molineus <david.molineus@netzmacht.de>
  * @author     Sven Baumann <baumann.sv@gmail.com>
- * @copyright  2012-2019 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2012-2021 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests to test class Url.
+ *
+ * @covers \MetaModels\AttributeUrlBundle\Attribute\Url
  */
 class UrlTest extends TestCase
 {
