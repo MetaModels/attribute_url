@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2019 The MetaModels team.
+ * (c) 2012-2021 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,7 +13,8 @@
  * @package    MetaModels/attribute_url
  * @author     David Molineus <david.molineus@netzmacht.de>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
- * @copyright  2012-2019 The MetaModels team.
+ * @author     Sven Baumann <baumann.sv@gmail.com>
+ * @copyright  2012-2021 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -31,6 +32,8 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 /**
  * This test case test the extension.
+ *
+ * @covers \MetaModels\AttributeUrlBundle\DependencyInjection\MetaModelsAttributeUrlExtension
  */
 class MetaModelsAttributeUrlExtensionTest extends TestCase
 {
@@ -43,8 +46,8 @@ class MetaModelsAttributeUrlExtensionTest extends TestCase
     {
         $extension = new MetaModelsAttributeUrlExtension();
 
-        $this->assertInstanceOf(MetaModelsAttributeUrlExtension::class, $extension);
-        $this->assertInstanceOf(ExtensionInterface::class, $extension);
+        self::assertInstanceOf(MetaModelsAttributeUrlExtension::class, $extension);
+        self::assertInstanceOf(ExtensionInterface::class, $extension);
     }
 
     /**
@@ -57,12 +60,12 @@ class MetaModelsAttributeUrlExtensionTest extends TestCase
         $container = $this->getMockBuilder(ContainerBuilder::class)->getMock();
 
         $container
-            ->expects($this->exactly(3))
+            ->expects(self::exactly(3))
             ->method('setDefinition')
             ->withConsecutive(
                 [
                     'metamodels.attribute_url.factory',
-                    $this->callback(
+                    self::callback(
                         function ($value) {
                             /** @var Definition $value */
                             $this->assertInstanceOf(Definition::class, $value);
@@ -75,7 +78,7 @@ class MetaModelsAttributeUrlExtensionTest extends TestCase
                 ],
                 [
                     'metamodels.attribute_url.factory.container',
-                    $this->callback(
+                    self::callback(
                         function ($value) {
                             /** @var Definition $value */
                             $this->assertInstanceOf(Definition::class, $value);
@@ -88,7 +91,7 @@ class MetaModelsAttributeUrlExtensionTest extends TestCase
                 ],
                 [
                     UrlWizardHandler::class,
-                    $this->callback(
+                    self::callback(
                         function ($value) {
                             /** @var Definition $value */
                             $this->assertInstanceOf(Definition::class, $value);
