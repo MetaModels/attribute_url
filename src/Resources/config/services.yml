@@ -18,3 +18,8 @@ services:
     MetaModels\AttributeUrlBundle\DcGeneral\Events\UrlWizardHandler:
         tags:
             - { name: kernel.event_listener, event: 'dc-general.view.contao2backend.manipulate-widget', method: '__invoke' }
+
+    MetaModels\AttributeUrlBundle\Schema\DoctrineSchemaGenerator:
+        tags:
+            - { name: 'metamodels.schema-generator.doctrine' }
+
