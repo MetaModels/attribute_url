@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2021 The MetaModels team.
+ * (c) 2012-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,7 +14,8 @@
  * @author     David Molineus <david.molineus@netzmacht.de>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     Sven Baumann <baumann.sv@gmail.com>
- * @copyright  2012-2021 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2012-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -37,12 +38,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
  */
 class MetaModelsAttributeUrlExtensionTest extends TestCase
 {
-    /**
-     * Test that extension can be instantiated.
-     *
-     * @return void
-     */
-    public function testInstantiation()
+    public function testInstantiation(): void
     {
         $extension = new MetaModelsAttributeUrlExtension();
 
@@ -50,60 +46,23 @@ class MetaModelsAttributeUrlExtensionTest extends TestCase
         self::assertInstanceOf(ExtensionInterface::class, $extension);
     }
 
-    /**
-     * Test that the services are loaded.
-     *
-     * @return void
-     */
-    public function testFactoryIsRegistered()
+    public function testFactoryIsRegistered(): void
     {
-        $container = $this->getMockBuilder(ContainerBuilder::class)->getMock();
-
-        $container
-            ->expects(self::exactly(3))
-            ->method('setDefinition')
-            ->withConsecutive(
-                [
-                    'metamodels.attribute_url.factory',
-                    self::callback(
-                        function ($value) {
-                            /** @var Definition $value */
-                            $this->assertInstanceOf(Definition::class, $value);
-                            $this->assertEquals(AttributeTypeFactory::class, $value->getClass());
-                            $this->assertCount(1, $value->getTag('metamodels.attribute_factory'));
-
-                            return true;
-                        }
-                    )
-                ],
-                [
-                    'metamodels.attribute_url.factory.container',
-                    self::callback(
-                        function ($value) {
-                            /** @var Definition $value */
-                            $this->assertInstanceOf(Definition::class, $value);
-                            $this->assertEquals(ServiceLocator::class, $value->getClass());
-                            $this->assertCount(1, $value->getTag('container.service_locator'));
-
-                            return true;
-                        }
-                    )
-                ],
-                [
-                    UrlWizardHandler::class,
-                    self::callback(
-                        function ($value) {
-                            /** @var Definition $value */
-                            $this->assertInstanceOf(Definition::class, $value);
-                            $this->assertCount(1, $value->getTag('kernel.event_listener'));
-
-                            return true;
-                        }
-                    )
-                ]
-            );
+        $container = new ContainerBuilder();
 
         $extension = new MetaModelsAttributeUrlExtension();
         $extension->load([], $container);
+
+        self::assertTrue($container->hasDefinition('metamodels.attribute_url.factory'));
+        $definition = $container->getDefinition('metamodels.attribute_url.factory');
+        self::assertCount(1, $definition->getTag('metamodels.attribute_factory'));
+
+        self::assertTrue($container->hasDefinition('metamodels.attribute_url.factory.container'));
+        $definition = $container->getDefinition('metamodels.attribute_url.factory.container');
+        self::assertCount(1, $definition->getTag('container.service_locator'));
+
+        self::assertTrue($container->hasDefinition(UrlWizardHandler::class));
+        $definition = $container->getDefinition(UrlWizardHandler::class);
+        self::assertCount(1, $definition->getTag('kernel.event_listener'));
     }
 }
