@@ -24,10 +24,12 @@
 
 namespace MetaModels\AttributeUrlBundle\DcGeneral\Events;
 
-use Contao\StringUtil;
+use Contao\CoreBundle\Picker\PickerBuilderInterface;
 use ContaoCommunityAlliance\Contao\Bindings\ContaoEvents;
 use ContaoCommunityAlliance\Contao\Bindings\Events\Image\GenerateHtmlEvent;
+use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\ContaoBackendViewTemplate;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
+use ContaoCommunityAlliance\DcGeneral\DataDefinition\ContainerInterface;
 use ContaoCommunityAlliance\Translator\TranslatorInterface;
 use MetaModels\AttributeUrlBundle\Attribute\Url;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -43,6 +45,11 @@ class UrlWizardHandler
      * @var array<string, array<string, Url>>
      */
     private array $propertyNames = [];
+
+    public function __construct(
+        private readonly PickerBuilderInterface $pickerBuilder,
+    ) {
+    }
 
     /**
      * Register an attribute
@@ -71,43 +78,40 @@ class UrlWizardHandler
         if (!isset($this->propertyNames[$tableName][$propName])) {
             return;
         }
-        /** @var Url $attribute */
+
         $attribute = $this->propertyNames[$tableName][$propName];
 
-        $model      = $event->getModel();
+        $environment = $event->getEnvironment();
+        $dataDefinition = $environment->getDataDefinition();
+        assert($dataDefinition instanceof ContainerInterface);
+
         $inputId    = $propName . (!$attribute->get('trim_title') ? '_1' : '');
-        $translator = $event->getEnvironment()->getTranslator();
+        $translator = $environment->getTranslator();
         assert($translator instanceof TranslatorInterface);
 
         $this->addStylesheet('metamodelsattribute_url', 'bundles/metamodelsattributeurl/style.css');
 
-        $currentField = StringUtil::deserialize($model->getProperty($propName), true);
-
-        $dispatcher = $event->getEnvironment()->getEventDispatcher();
+        $dispatcher = $environment->getEventDispatcher();
         assert($dispatcher instanceof EventDispatcherInterface);
-        /** @var GenerateHtmlEvent $imageEvent */
-        $imageEvent = $dispatcher->dispatch(
-            new GenerateHtmlEvent(
-                'pickpage.svg',
-                $translator->translate('pagepicker', 'MSC'),
-                'style="vertical-align:text-bottom;cursor:pointer;width:20px;height:20px;"'
-            ),
-            ContaoEvents::IMAGE_GET_HTML
+
+        $pickerUrl = $this->pickerBuilder->getUrl('cca_link');
+        $urlEvent = new GenerateHtmlEvent(
+            'pickpage.svg',
+            $translator->translate('pagePicker', 'dc-general'),
+            'style="vertical-align:text-bottom;cursor:pointer;width:20px;height:20px;"'
         );
 
-        $event->getWidget()->wizard = ' <a href="contao/page.php?do=' . \Input::get('do') .
-                                      '&amp;table=' . $tableName . '&amp;field=' . $inputId .
-                                      '&amp;value=' . str_replace(['{{link_url::', '}}'], '', ($currentField[1] ?? ''))
-                                      . '" title="' .
-                                      StringUtil::specialchars($translator->translate('pagepicker', 'MSC')) .
-                                      '" onclick="Backend.getScrollOffset();' .
-                                      'Backend.openModalSelector({\'width\':765,\'title\':\'' .
-                                      StringUtil::specialchars(
-                                          str_replace("'", "\\'", $translator->translate('page.0', 'MOD'))
-                                      ) .
-                                      '\',\'url\':this.href,\'id\':\'' . $inputId . '\',\'tag\':\'ctrl_' . $inputId
-                                      . '\',\'self\':this});' .
-                                      'return false">' . ($imageEvent->getHtml() ?? '') . '</a>';
+        $dispatcher->dispatch($urlEvent, ContaoEvents::IMAGE_GET_HTML);
+
+        $template = new ContaoBackendViewTemplate('dc_general_wizard_link_url_picker');
+        $template
+            ->set('name', $event->getWidget()->name)
+            ->set('popupUrl', $pickerUrl)
+            ->set('html', ' ' . (string) $urlEvent->getHtml())
+            ->set('label', $translator->translate($event->getProperty()->getLabel(), $dataDefinition->getName()))
+            ->set('id', $inputId);
+
+        $event->getWidget()->wizard = $template->parse();
     }
 
     /**

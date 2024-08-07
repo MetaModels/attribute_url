@@ -33,11 +33,11 @@ use Psr\Container\ContainerInterface;
 class AttributeTypeFactory implements IAttributeTypeFactory
 {
     /**
-     * The database connection.
+     * The container interface.
      *
      * @var ContainerInterface
      */
-    private $container;
+    private ContainerInterface $container;
 
     /**
      * {@inheritDoc}
