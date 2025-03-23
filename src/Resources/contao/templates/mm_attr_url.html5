@@ -1,2 +1,2 @@
-<?php $arrValues = deserialize($this->raw); ?>
-<span class="url<?= $this->additional_class ?>"><a<?= ($this->settings->get('no_external_link')) ? '' : ' target="_blank"'; ?> href="<?= $this->replaceInsertTags($arrValues[1]); ?>"><?= (!empty($arrValues[0])) ? $arrValues[0] : $this->replaceInsertTags($arrValues[1]); ?></a></span>
+<?php $arrValues = deserialize($this->raw, true);?>
+<span class="text url<?= $this->additional_class ?>"><a<?= ($this->settings->get('no_external_link')) ? '' : ' target="_blank"'; ?> href="<?= $this->replaceInsertTags($arrValues[1] ?? ''); ?>"><?= (isset($arrValues[0]) && !empty($arrValues[0])) ? $arrValues[0] : $this->replaceInsertTags($arrValues[1] ?? ''); ?></a></span>

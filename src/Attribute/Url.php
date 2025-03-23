@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2019 The MetaModels team.
+ * (c) 2012-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,7 +19,7 @@
  * @author     Sven Baumann <baumann.sv@gmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
  * @author     David Molineus <david.molineus@netzmacht.de>
- * @copyright  2012-2019 The MetaModels team.
+ * @copyright  2012-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -61,12 +61,13 @@ class Url extends BaseSimple
      */
     public function valueToWidget($varValue)
     {
-        if ($this->get('trim_title') && \is_array($varValue)) {
+        $trimTitle = (bool) $this->get('trim_title');
+        if ($trimTitle && \is_array($varValue)) {
             $varValue = $varValue[1];
         }
 
         if ($varValue === null) {
-            $varValue = $this->get('trim_title') ? null : [0 => '', 1 => ''];
+            $varValue = $trimTitle ? null : [0 => '', 1 => ''];
         }
 
         return parent::valueToWidget($varValue);
@@ -75,19 +76,25 @@ class Url extends BaseSimple
     /**
      * {@inheritdoc}
      */
-    public function widgetToValue($varValue, $intId)
+    public function widgetToValue($varValue, $itemId)
     {
-        if ($this->get('trim_title') && !\is_array($varValue)) {
-            $varValue = [0 => '', 1 => $varValue];
+        if ((bool) $this->get('trim_title')) {
+            // This should always be the case?!? - We always should get a plain string here.
+            if (!\is_array($varValue)) {
+                $varValue = [0 => '', 1 => (string) $varValue];
+            }
+            if (empty($varValue[1])) {
+                $varValue = null;
+            }
+
+            return parent::widgetToValue($varValue, $itemId);
         }
 
-        if (($this->get('trim_title') && empty($varValue[1])) ||
-            (!$this->get('trim_title') && empty($varValue[0]) && empty($varValue[1]))
-        ) {
+        if (empty($varValue[0]) && empty($varValue[1])) {
             $varValue = null;
         }
 
-        return parent::widgetToValue($varValue, $intId);
+        return parent::widgetToValue($varValue, $itemId);
     }
 
     /**

@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_url.
  *
- * (c) 2012-2021 The MetaModels team.
+ * (c) 2012-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,13 +14,15 @@
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     David Molineus <david.molineus@netzmacht.de>
  * @author     Sven Baumann <baumann.sv@gmail.com>
- * @copyright  2012-2021 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2012-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_url/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
 
 namespace MetaModels\AttributeUrlBundle\Test\Attribute;
 
+use Contao\CoreBundle\Picker\PickerBuilderInterface;
 use Doctrine\DBAL\Connection;
 use MetaModels\Attribute\IAttributeTypeFactory;
 use MetaModels\AttributeUrlBundle\Attribute\AttributeTypeFactory;
@@ -43,9 +45,7 @@ class UrlAttributeTypeFactoryTest extends TestCase
      * Mock a MetaModel.
      *
      * @param string $tableName        The table name.
-     *
      * @param string $language         The language.
-     *
      * @param string $fallbackLanguage The fallback language.
      *
      * @return IMetaModel
@@ -123,13 +123,14 @@ class UrlAttributeTypeFactoryTest extends TestCase
      */
     public function testCreateUrl()
     {
-        $container   = new Container();
-        $connection  = $this->mockConnection();
-        $manipulator = $this->mockTableManipulator($connection);
+        $container     = new Container();
+        $connection    = $this->mockConnection();
+        $manipulator   = $this->mockTableManipulator($connection);
+        $pickerBuilder = $this->getMockForAbstractClass(PickerBuilderInterface::class);
 
         $container->set(Connection::class, $connection);
         $container->set(TableManipulator::class, $manipulator);
-        $container->set(UrlWizardHandler::class, new UrlWizardHandler());
+        $container->set(UrlWizardHandler::class, new UrlWizardHandler($pickerBuilder));
 
         $factory   = new AttributeTypeFactory($container);
         $values    = ['colname' => 'test'];
